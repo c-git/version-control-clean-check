@@ -1,6 +1,14 @@
 [package]
 name = "version-control-clean-check"
-version = "0.1.0"
+version = "0.0.0"
+description = "Checks if the version cotrol is clean. Based on Cargo"
+keywords = []
+repository = "https://github.com/c-git/version-control-clean-check"
+documentation = "https://docs.rs/version-control-clean-check"
+categories = []
+authors = ["One <one.bgz1@gmailcom>"]
+readme = "README.md"
+license = "MIT OR Apache-2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
