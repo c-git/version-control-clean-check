@@ -119,3 +119,19 @@ fn allow_no_vcs(#[case] test_dir: TestDir) {
     let expected = Ok(());
     test_check_version_control(opts, test_dir, expected);
 }
+
+#[rstest]
+#[case(false, false, TD::NoVCS, Err(VCSError::NoVCS))]
+fn vcs_required(
+    #[case] allow_dirty: bool,
+    #[case] allow_staged: bool,
+    #[case] test_dir: TestDir,
+    #[case] expected: VCSResult<()>,
+) {
+    let mut opts = CheckOptions::new();
+    // opts.allow_no_vcs = false; // Always false because it is tested in allow_no_vcs
+    opts.allow_dirty = allow_dirty;
+    opts.allow_staged = allow_staged;
+
+    test_check_version_control(opts, test_dir, expected);
+}
