@@ -39,11 +39,7 @@ pub fn check_version_control<P: AsRef<Path>>(path: P, opts: &CheckOptions) -> VC
         let mut repo_opts = git2::StatusOptions::new();
         repo_opts.include_ignored(false);
         repo_opts.include_untracked(true);
-        let statuses = match repo.statuses(Some(&mut repo_opts)) {
-            Ok(x) => x,
-            Err(e) => return VCSResult::Err(VSCError::Other(e.into())),
-        };
-        for status in statuses.iter() {
+        for status in repo.statuses(Some(&mut repo_opts))?.iter() {
             if let Some(path) = status.path() {
                 match status.status() {
                     git2::Status::CURRENT => (),
