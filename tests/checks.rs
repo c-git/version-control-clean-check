@@ -99,3 +99,23 @@ fn non_existent_folder() {
     let actual = check_version_control(&non_existent_path, &opts);
     match_results(actual, Ok(()));
 }
+
+fn test_check_version_control(opts: CheckOptions, test_dir: TestDir, expected: VCSResult<()>) {
+    let path = test_dir.to_path();
+    println!("Opts: {opts:?} Path: {path:?}");
+    let actual = check_version_control(path, &opts);
+    match_results(actual, expected);
+}
+
+#[rstest]
+#[case(TD::NoVCS)]
+#[case(TD::Clean)]
+#[case(TD::StagedOnly)]
+#[case(TD::DirtyOnly)]
+#[case(TD::StagedAndDirty)]
+fn allow_no_vcs(#[case] test_dir: TestDir) {
+    let mut opts = CheckOptions::new();
+    opts.allow_no_vcs = true;
+    let expected = Ok(());
+    test_check_version_control(opts, test_dir, expected);
+}
