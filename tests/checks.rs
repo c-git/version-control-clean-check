@@ -107,6 +107,8 @@ fn test_check_version_control(opts: CheckOptions, test_dir: TestDir, expected: V
     match_results(actual, expected);
 }
 
+// TODO Create folders for tests
+
 #[rstest]
 #[case(TD::NoVCS)]
 #[case(TD::Clean)]
