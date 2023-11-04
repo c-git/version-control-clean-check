@@ -1,4 +1,4 @@
-use crate::VCSResult;
+use crate::{VCSResult, VSCError};
 use std::path::Path;
 
 /// Stores the options available for calling [`check_version_control`] and controls which checks if any are run
@@ -26,16 +26,12 @@ pub fn check_version_control<P: AsRef<Path>>(path: P, opts: &CheckOptions) -> VC
         return Ok(());
     }
     if !supporting_code::existing_vcs_repo(path.as_ref(), path.as_ref()) {
-        // bail!(
-        //     "no VCS found for this package and `cargo fix` can potentially \
-        //      perform destructive changes; if you'd like to suppress this \
-        //      error pass `--allow-no-vcs`"
-        // )
+        return VCSResult::Err(VSCError::NoVCS);
     }
 
-    // if opts.allow_dirty && opts.allow_staged {
-    //     return Ok(());
-    // }
+    if opts.allow_dirty && opts.allow_staged {
+        return Ok(());
+    }
 
     // let mut dirty_files = Vec::new();
     // let mut staged_files = Vec::new();
