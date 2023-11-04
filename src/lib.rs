@@ -11,6 +11,6 @@ mod check;
 mod error;
 
 /// Type alias for Result<T, [`VSCError`]>
-pub type VCSResult<T> = Result<T, VSCError>;
+pub type VCSResult<T> = Result<T, VCSError>;
 pub use check::{check_version_control, CheckOptions};
-pub use error::VSCError;
+pub use error::VCSError;

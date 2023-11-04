@@ -1,4 +1,4 @@
-use crate::{VCSResult, VSCError};
+use crate::{VCSError, VCSResult};
 use std::path::Path;
 
 /// Stores the options available for calling [`check_version_control`] and controls which checks if any are run
@@ -26,7 +26,7 @@ pub fn check_version_control<P: AsRef<Path>>(path: P, opts: &CheckOptions) -> VC
         return Ok(());
     }
     if !supporting_code::existing_vcs_repo(path.as_ref(), path.as_ref()) {
-        return VCSResult::Err(VSCError::NoVCS);
+        return VCSResult::Err(VCSError::NoVCS);
     }
 
     if opts.allow_dirty && opts.allow_staged {
@@ -65,7 +65,7 @@ pub fn check_version_control<P: AsRef<Path>>(path: P, opts: &CheckOptions) -> VC
     if dirty_files.is_empty() && staged_files.is_empty() {
         Ok(())
     } else {
-        VCSResult::Err(VSCError::NotAllowedFilesFound {
+        VCSResult::Err(VCSError::NotAllowedFilesFound {
             dirty_files,
             staged_files,
         })
