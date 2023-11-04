@@ -6,7 +6,7 @@ use std::path::Path;
 pub struct CheckOptions {
     /// Does not return an error for dirty files nor generate the list of said files
     pub allow_dirty: bool,
-    /// Does no additional checks if no version control is found and just returns `OK(())`
+    /// This option basically disables checking. If true no checks are done. (Not even if the `path` exists)
     pub allow_no_vcs: bool,
     /// Does not return an error for staged files nor generate the list of said files
     pub allow_staged: bool,
