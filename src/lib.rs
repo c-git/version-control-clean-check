@@ -4,6 +4,9 @@
 #![forbid(unsafe_code)]
 #![doc = include_str!("../README.md")]
 
+// TODO: Add example on main page
+// //! # Sample Code
+
 mod check;
 mod error;
 
