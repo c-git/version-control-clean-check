@@ -123,7 +123,18 @@ fn allow_no_vcs(#[case] test_dir: TestDir) {
 }
 
 #[rstest]
+// No Dirty, No Staged
 #[case(false, false, TD::NoVCS, Err(VCSError::NoVCS))]
+#[case(false, false, TD::Clean, Err(VCSError::NoVCS))]
+#[case(false, false, TD::StagedOnly, Err(VCSError::NoVCS))]
+#[case(false, false, TD::DirtyOnly, Err(VCSError::NoVCS))]
+#[case(false, false, TD::StagedAndDirty, Err(VCSError::NoVCS))]
+// No Dirty, Yes Staged
+#[case(false, true, TD::NoVCS, Err(VCSError::NoVCS))]
+// Yes Dirty, No Staged
+#[case(true, false, TD::NoVCS, Err(VCSError::NoVCS))]
+// Yes Dirty, Yes Staged
+#[case(true, true, TD::NoVCS, Err(VCSError::NoVCS))]
 fn vcs_required(
     #[case] allow_dirty: bool,
     #[case] allow_staged: bool,
