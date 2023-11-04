@@ -33,62 +33,43 @@ pub fn check_version_control<P: AsRef<Path>>(path: P, opts: &CheckOptions) -> VC
         return Ok(());
     }
 
-    // let mut dirty_files = Vec::new();
-    // let mut staged_files = Vec::new();
-    // if let Ok(repo) = git2::Repository::discover(config.cwd()) {
-    //     let mut repo_opts = git2::StatusOptions::new();
-    //     repo_opts.include_ignored(false);
-    //     repo_opts.include_untracked(true);
-    //     for status in repo.statuses(Some(&mut repo_opts))?.iter() {
-    //         if let Some(path) = status.path() {
-    //             match status.status() {
-    //                 git2::Status::CURRENT => (),
-    //                 git2::Status::INDEX_NEW
-    //                 | git2::Status::INDEX_MODIFIED
-    //                 | git2::Status::INDEX_DELETED
-    //                 | git2::Status::INDEX_RENAMED
-    //                 | git2::Status::INDEX_TYPECHANGE => {
-    //                     if !opts.allow_staged {
-    //                         staged_files.push(path.to_string())
-    //                     }
-    //                 }
-    //                 _ => {
-    //                     if !opts.allow_dirty {
-    //                         dirty_files.push(path.to_string())
-    //                     }
-    //                 }
-    //             };
-    //         }
-    //     }
-    // }
+    let mut dirty_files = Vec::new();
+    let mut staged_files = Vec::new();
+    if let Ok(repo) = git2::Repository::discover(path.as_ref()) {
+        let mut repo_opts = git2::StatusOptions::new();
+        repo_opts.include_ignored(false);
+        repo_opts.include_untracked(true);
+        for status in repo.statuses(Some(&mut repo_opts))?.iter() {
+            if let Some(path) = status.path() {
+                match status.status() {
+                    git2::Status::CURRENT => (),
+                    git2::Status::INDEX_NEW
+                    | git2::Status::INDEX_MODIFIED
+                    | git2::Status::INDEX_DELETED
+                    | git2::Status::INDEX_RENAMED
+                    | git2::Status::INDEX_TYPECHANGE => {
+                        if !opts.allow_staged {
+                            staged_files.push(path.to_string())
+                        }
+                    }
+                    _ => {
+                        if !opts.allow_dirty {
+                            dirty_files.push(path.to_string())
+                        }
+                    }
+                };
+            }
+        }
+    }
 
-    // if dirty_files.is_empty() && staged_files.is_empty() {
-    //     return Ok(());
-    // }
-
-    // let mut files_list = String::new();
-    // for file in dirty_files {
-    //     files_list.push_str("  * ");
-    //     files_list.push_str(&file);
-    //     files_list.push_str(" (dirty)\n");
-    // }
-    // for file in staged_files {
-    //     files_list.push_str("  * ");
-    //     files_list.push_str(&file);
-    //     files_list.push_str(" (staged)\n");
-    // }
-
-    // bail!(
-    //     "the working directory of this package has uncommitted changes, and \
-    //      `cargo fix` can potentially perform destructive changes; if you'd \
-    //      like to suppress this error pass `--allow-dirty`, `--allow-staged`, \
-    //      or commit the changes to these files:\n\
-    //      \n\
-    //      {}\n\
-    //      ",
-    //     files_list
-    // );
-    Ok(())
+    if dirty_files.is_empty() && staged_files.is_empty() {
+        Ok(())
+    } else {
+        VCSResult::Err(VSCError::NotAllowedFilesFound {
+            dirty_files,
+            staged_files,
+        })
+    }
 }
 
 mod supporting_code;
