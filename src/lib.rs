@@ -10,6 +10,6 @@
 mod check;
 mod error;
 
-type VCSResult = Result<(), error::VSCError>;
+pub type VCSResult<T> = Result<T, error::VSCError>;
 pub use check::{check_version_control, CheckOptions};
 pub use error::VSCError;
