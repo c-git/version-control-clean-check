@@ -5,16 +5,16 @@ use super::VCSResult;
 /// Stores the options available for calling [`check_version_control`] and controls which checks if any are run
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 pub struct CheckOptions {
-    /// Does not return an error for dirty files nor the list of files
+    /// Does not return an error for dirty files nor generate the list of said files
     pub allow_dirty: bool,
-    /// Disables the checks if no version control is found and just returns `OK(())`
+    /// Does no additional checks if no version control is found and just returns `OK(())`
     pub allow_no_vcs: bool,
-    /// Does not return an error for staged files nor the list of files
+    /// Does not return an error for staged files nor generate the list of said files
     pub allow_staged: bool,
 }
 
 impl CheckOptions {
-    /// Creates a [`Self`] with default values
+    /// Creates a [`CheckOptions`] with default values
     pub fn new() -> Self {
         Default::default()
     }
