@@ -1,5 +1,4 @@
 use super::VCSResult;
-use cargo_util::paths;
 use cargo_util::ProcessBuilder;
 use std::path::Path;
 
@@ -27,13 +26,13 @@ pub fn check_version_control<P: AsRef<Path>>(path: P, opts: &CheckOptions) -> VC
     if opts.allow_no_vcs {
         return Ok(());
     }
-    // if !existing_vcs_repo(path, path) {
-    //     bail!(
-    //         "no VCS found for this package and `cargo fix` can potentially \
-    //          perform destructive changes; if you'd like to suppress this \
-    //          error pass `--allow-no-vcs`"
-    //     )
-    // }
+    if !existing_vcs_repo(path.as_ref(), path.as_ref()) {
+        // bail!(
+        //     "no VCS found for this package and `cargo fix` can potentially \
+        //      perform destructive changes; if you'd like to suppress this \
+        //      error pass `--allow-no-vcs`"
+        // )
+    }
 
     // if opts.allow_dirty && opts.allow_staged {
     //     return Ok(());
@@ -121,29 +120,14 @@ pub fn existing_vcs_repo(path: &Path, cwd: &Path) -> bool {
 
 pub struct HgRepo;
 pub struct GitRepo;
-pub struct PijulRepo;
-pub struct FossilRepo;
 
 impl GitRepo {
-    pub fn init(path: &Path, _: &Path) -> VCSResult<GitRepo> {
-        git2::Repository::init(path)?;
-        Ok(GitRepo)
-    }
     pub fn discover(path: &Path, _: &Path) -> Result<git2::Repository, git2::Error> {
         git2::Repository::discover(path)
     }
 }
 
 impl HgRepo {
-    pub fn init(path: &Path, cwd: &Path) -> VCSResult<HgRepo> {
-        ProcessBuilder::new("hg")
-            .cwd(cwd)
-            .arg("init")
-            .arg("--")
-            .arg(path)
-            .exec()?;
-        Ok(HgRepo)
-    }
     pub fn discover(path: &Path, cwd: &Path) -> VCSResult<HgRepo> {
         ProcessBuilder::new("hg")
             .cwd(cwd)
@@ -152,47 +136,5 @@ impl HgRepo {
             .arg("root")
             .exec_with_output()?;
         Ok(HgRepo)
-    }
-}
-
-impl PijulRepo {
-    pub fn init(path: &Path, cwd: &Path) -> VCSResult<PijulRepo> {
-        ProcessBuilder::new("pijul")
-            .cwd(cwd)
-            .arg("init")
-            .arg("--")
-            .arg(path)
-            .exec()?;
-        Ok(PijulRepo)
-    }
-}
-
-impl FossilRepo {
-    pub fn init(path: &Path, cwd: &Path) -> VCSResult<FossilRepo> {
-        // fossil doesn't create the directory so we'll do that first
-        paths::create_dir_all(path)?;
-
-        // set up the paths we'll use
-        let db_fname = ".fossil";
-        let mut db_path = path.to_owned();
-        db_path.push(db_fname);
-
-        // then create the fossil DB in that location
-        ProcessBuilder::new("fossil")
-            .cwd(cwd)
-            .arg("init")
-            .arg("--")
-            .arg(&db_path)
-            .exec()?;
-
-        // open it in that new directory
-        ProcessBuilder::new("fossil")
-            .cwd(&path)
-            .arg("open")
-            .arg("--")
-            .arg(db_fname)
-            .exec()?;
-
-        Ok(FossilRepo)
     }
 }
