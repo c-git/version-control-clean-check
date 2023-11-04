@@ -10,10 +10,8 @@ Display messages for errors are meant to be human readable and as such are not c
 
 All code in this repository is dual-licensed under either:
 
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or <http://apache.org/licenses/LICENSE-2.0>)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
-
-<!-- TODO: Figure out solution to broken license links -->
+- Apache License, Version 2.0
+- MIT license
 
 at your option.
 This means you can select the license you prefer!
