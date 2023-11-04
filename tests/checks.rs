@@ -1,8 +1,9 @@
-use std::{fmt::Debug, fs::canonicalize, path::PathBuf};
+use std::{fmt::Debug, path::PathBuf};
 
 use anyhow::bail;
 use rstest::rstest;
 use version_control_clean_check::{check_version_control, CheckOptions, VCSError, VCSResult};
+use TestDir as TD;
 
 #[derive(Debug)]
 struct TestError(VCSError);
@@ -43,7 +44,7 @@ impl PartialEq for TestError {
     }
 }
 
-enum TestDirectories {
+enum TestDir {
     NoVCS,
     Clean,
     StagedOnly,
@@ -51,18 +52,18 @@ enum TestDirectories {
     StagedAndDirty,
 }
 
-impl TestDirectories {
+impl TestDir {
     fn to_path(&self) -> PathBuf {
         let base_test_folder = PathBuf::from("tests/test_folders/");
         let sub_folder = match self {
-            TestDirectories::NoVCS => "no_vcs",
-            TestDirectories::Clean => "clean",
-            TestDirectories::StagedOnly => "staged_only",
-            TestDirectories::DirtyOnly => "dirty_only",
-            TestDirectories::StagedAndDirty => "staged_and_dirty",
+            TestDir::NoVCS => "no_vcs",
+            TestDir::Clean => "clean",
+            TestDir::StagedOnly => "staged_only",
+            TestDir::DirtyOnly => "dirty_only",
+            TestDir::StagedAndDirty => "staged_and_dirty",
         };
         let result = base_test_folder.join(sub_folder);
-        assert!(result.exists());
+        assert!(result.exists(), "Path not found: {result:?}");
         result.canonicalize().unwrap()
     }
 }
@@ -73,10 +74,13 @@ fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
         (Ok(_), Err(_)) | (Err(_), Ok(_)) => {
             panic!("Actual and Expected do not match./n actual:{actual:?}/n expected: {expected:?}")
         }
-        (Err(..), Err(..)) => assert_eq!(
-            TestError(actual.unwrap_err()),
-            TestError(expected.unwrap_err())
-        ),
+        (Err(..), Err(..)) => {
+            let actual_error = actual.unwrap_err();
+            let expected_error = expected.unwrap_err();
+            println!("---\nActual Error:\n{actual_error}\n");
+            println!("---\nExpected Error:\n{expected_error}\n---");
+            assert_eq!(TestError(actual_error), TestError(expected_error))
+        }
     }
 }
 
