@@ -15,9 +15,12 @@ pub enum VSCError {
         /// Staged files found (note this will be empty if staged files are allowed)
         staged_files: Vec<String>,
     },
-    /// Errors produced outside of the ones from this library
+    /// Errors from the [git2](https://docs.rs/git2/latest/git2/) library
     #[error(transparent)]
-    Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
+    GitError(#[from] git2::Error),
+    /// Errors that were wrapped in anyhow by [cargo_utils](https://docs.rs/cargo-util/latest/cargo_util/)
+    #[error(transparent)]
+    Anyhow(#[from] anyhow::Error),
 }
 
 fn format_disallowed_files(dirty_files: &[String], staged_files: &[String]) -> String {
