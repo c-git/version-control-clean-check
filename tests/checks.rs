@@ -67,6 +67,19 @@ impl TestDirectories {
     }
 }
 
+fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
+    match (&actual, &expected) {
+        (Ok(_), Ok(_)) => (),
+        (Ok(_), Err(_)) | (Err(_), Ok(_)) => {
+            panic!("Actual and Expected do not match./n actual:{actual:?}/n expected: {expected:?}")
+        }
+        (Err(..), Err(..)) => assert_eq!(
+            TestError(actual.unwrap_err()),
+            TestError(expected.unwrap_err())
+        ),
+    }
+}
+
 #[test]
 fn non_existent_folder() {
     let mut opts = CheckOptions::new();
@@ -81,17 +94,4 @@ fn non_existent_folder() {
     opts.allow_no_vcs = true;
     let actual = check_version_control(&non_existent_path, &opts);
     match_results(actual, Ok(()));
-}
-
-fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
-    match (&actual, &expected) {
-        (Ok(_), Ok(_)) => (),
-        (Ok(_), Err(_)) | (Err(_), Ok(_)) => {
-            panic!("Actual and Expected do not match./n actual:{actual:?}/n expected: {expected:?}")
-        }
-        (Err(..), Err(..)) => assert_eq!(
-            TestError(actual.unwrap_err()),
-            TestError(expected.unwrap_err())
-        ),
-    }
 }
