@@ -1,12 +1,16 @@
 use std::path::Path;
 
-pub fn init<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
-    git2::Repository::init(path)?;
-    Ok(())
+use git2::Repository;
+
+pub fn init<P: AsRef<Path>>(path: P) -> anyhow::Result<Repository> {
+    Ok(git2::Repository::init(path)?)
 }
 
-pub fn add<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
-    todo!()
+pub fn add_all(repo: Repository, files: &[&str]) -> anyhow::Result<()> {
+    let mut index = repo.index()?;
+    index.add_all(files, git2::IndexAddOption::DEFAULT, None)?;
+    index.write()?;
+    Ok(())
 }
 
 pub fn commit<P: AsRef<Path>>(path: P, msg: &str) -> anyhow::Result<()> {

@@ -1,6 +1,8 @@
 use anyhow::bail;
 use cargo_util::paths;
 use std::fmt::Debug;
+use std::fs::File;
+use std::path::Path;
 use std::path::PathBuf;
 use strum::EnumIter;
 use version_control_clean_check::check_version_control;
@@ -117,12 +119,23 @@ pub fn create_test_folder(test_dir: TestDir) -> anyhow::Result<()> {
     match test_dir {
         TestDir::NoVCS => paths::create_dir_all(path),
         TestDir::Clean => {
-            // paths::create_dir_all(&path)?;
-            git_commands::init(&path)?;
+            let repo = git_commands::init(&path)?;
+            create_abc(&path)?;
+            git_commands::add_all(repo, &["a", "b", "c"])?;
+
             Ok(())
         }
         TestDir::StagedOnly => todo!(),
         TestDir::DirtyOnly => todo!(),
         TestDir::StagedAndDirty => todo!(),
     }
+}
+
+fn create_abc<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
+    let path = path.as_ref();
+    for name in ["a", "b", "c"] {
+        let file_name = path.join(name);
+        File::create(file_name)?;
+    }
+    Ok(())
 }
