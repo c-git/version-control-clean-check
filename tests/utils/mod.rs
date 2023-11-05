@@ -18,7 +18,7 @@ pub(crate) fn test_check_version_control(
     expected: VCSResult<()>,
 ) {
     let path = test_dir.to_canonicalized_path();
-    println!("Opts: {opts:#?}\nPath: {path:?}");
+    println!("Opts: {opts:#?}\ntest_dir: {test_dir:?}\nPath: {path:?}");
     let actual = check_version_control(path, &opts);
     match_results(actual, expected);
 }
@@ -97,7 +97,7 @@ pub(crate) fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
     match (&actual, &expected) {
         (Ok(_), Ok(_)) => (),
         (Ok(_), Err(_)) | (Err(_), Ok(_)) => {
-            panic!("Actual and Expected do not match./n actual:{actual:?}/n expected: {expected:?}")
+            panic!("Actual and Expected do not match.\nactual: {actual:?}\nexpected: {expected:?}")
         }
         (Err(..), Err(..)) => {
             let actual_error = actual.unwrap_err();
