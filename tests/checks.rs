@@ -125,16 +125,28 @@ fn allow_no_vcs(#[case] test_dir: TestDir) {
 #[rstest]
 // No Dirty, No Staged
 #[case(false, false, TD::NoVCS, Err(VCSError::NoVCS))]
-#[case(false, false, TD::Clean, Err(VCSError::NoVCS))]
-#[case(false, false, TD::StagedOnly, Err(VCSError::NoVCS))]
-#[case(false, false, TD::DirtyOnly, Err(VCSError::NoVCS))]
-#[case(false, false, TD::StagedAndDirty, Err(VCSError::NoVCS))]
+#[case(false, false, TD::Clean, Ok(()))]
+#[case(false, false, TD::StagedOnly, Err(VCSError::NotAllowedFilesFound { dirty_files: vec![], staged_files: vec!["b".to_string(), "c".to_string()] }))]
+#[case(false, false, TD::DirtyOnly, Err(VCSError::NotAllowedFilesFound { dirty_files: vec!["b".to_string(), "c".to_string()], staged_files: vec![] }))]
+#[case(false, false, TD::StagedAndDirty, Err(VCSError::NotAllowedFilesFound { dirty_files: vec!["c".to_string()], staged_files: vec!["b".to_string()] }))]
 // No Dirty, Yes Staged
 #[case(false, true, TD::NoVCS, Err(VCSError::NoVCS))]
+#[case(false, true, TD::Clean, Ok(()))]
+#[case(false, true, TD::StagedOnly, Ok(()))]
+#[case(false, true, TD::DirtyOnly, Err(VCSError::NotAllowedFilesFound { dirty_files: vec!["b".to_string(), "c".to_string()], staged_files: vec![] }))]
+#[case(false, true, TD::StagedAndDirty, Err(VCSError::NotAllowedFilesFound { dirty_files: vec!["c".to_string()], staged_files: vec![] }))]
 // Yes Dirty, No Staged
 #[case(true, false, TD::NoVCS, Err(VCSError::NoVCS))]
+#[case(true, false, TD::Clean, Ok(()))]
+#[case(true, false, TD::StagedOnly, Err(VCSError::NotAllowedFilesFound { dirty_files: vec![], staged_files: vec!["b".to_string(), "c".to_string()] }))]
+#[case(true, false, TD::DirtyOnly, Ok(()))]
+#[case(true, false, TD::StagedAndDirty, Err(VCSError::NotAllowedFilesFound { dirty_files: vec![], staged_files: vec!["b".to_string()] }))]
 // Yes Dirty, Yes Staged
 #[case(true, true, TD::NoVCS, Err(VCSError::NoVCS))]
+#[case(true, true, TD::Clean, Ok(()))]
+#[case(true, true, TD::StagedOnly, Ok(()))]
+#[case(true, true, TD::DirtyOnly, Ok(()))]
+#[case(true, true, TD::StagedAndDirty, Ok(()))]
 fn vcs_required(
     #[case] allow_dirty: bool,
     #[case] allow_staged: bool,
