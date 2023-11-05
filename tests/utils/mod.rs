@@ -117,18 +117,21 @@ pub fn create_test_folder(test_dir: &TestDir) -> anyhow::Result<()> {
     }
 
     match test_dir {
-        TestDir::NoVCS => paths::create_dir_all(path),
+        TestDir::NoVCS => {
+            paths::create_dir_all(&path)?;
+            create_abc(&path)?;
+        }
         TestDir::Clean => {
             let repo = git_commands::init(&path)?;
             create_abc(&path)?;
             git_commands::add_all(&repo, &["a", "b", "c"])?;
             git_commands::commit_irrelevant_msg(&repo)?;
-            Ok(())
         }
         TestDir::StagedOnly => todo!(),
         TestDir::DirtyOnly => todo!(),
         TestDir::StagedAndDirty => todo!(),
     }
+    Ok(())
 }
 
 fn create_abc<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
