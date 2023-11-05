@@ -1,7 +1,7 @@
 [package]
 name = "version-control-clean-check"
 version = "0.1.0"
-description = "Checks if the version cotrol is clean. Based on Cargo"
+description = "Checks if the version cotrol is clean. Based on code from Cargo."
 keywords = []
 repository = "https://github.com/c-git/version-control-clean-check"
 documentation = "https://docs.rs/version-control-clean-check"
