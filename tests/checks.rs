@@ -1,9 +1,9 @@
 use rstest::{fixture, rstest};
 use std::path::PathBuf;
-use test_utils::TestDir as TD;
+use utils::TestDir as TD;
 use version_control_clean_check::{check_version_control, CheckOptions, VCSError, VCSResult};
 
-mod test_utils;
+mod utils;
 
 #[test]
 fn non_existent_folder() {
@@ -13,12 +13,12 @@ fn non_existent_folder() {
 
     // Test is no vcs
     let actual = check_version_control(&non_existent_path, &opts);
-    test_utils::match_results(actual, Err(VCSError::NoVCS));
+    utils::match_results(actual, Err(VCSError::NoVCS));
 
     // Test passes if no vcs allowed
     opts.allow_no_vcs = true;
     let actual = check_version_control(&non_existent_path, &opts);
-    test_utils::match_results(actual, Ok(()));
+    utils::match_results(actual, Ok(()));
 }
 
 #[fixture]
@@ -34,12 +34,12 @@ fn create_dirs() -> anyhow::Result<()> {
 #[case(TD::StagedOnly)]
 #[case(TD::DirtyOnly)]
 #[case(TD::StagedAndDirty)]
-fn allow_no_vcs(#[case] test_dir: test_utils::TestDir, create_dirs: &anyhow::Result<()>) {
+fn allow_no_vcs(#[case] test_dir: utils::TestDir, create_dirs: &anyhow::Result<()>) {
     assert!(create_dirs.is_ok(), "{create_dirs:?}");
     let mut opts = CheckOptions::new();
     opts.allow_no_vcs = true;
     let expected = Ok(());
-    test_utils::test_check_version_control(opts, test_dir, expected);
+    utils::test_check_version_control(opts, test_dir, expected);
 }
 
 #[rstest]
@@ -70,7 +70,7 @@ fn allow_no_vcs(#[case] test_dir: test_utils::TestDir, create_dirs: &anyhow::Res
 fn vcs_required(
     #[case] allow_dirty: bool,
     #[case] allow_staged: bool,
-    #[case] test_dir: test_utils::TestDir,
+    #[case] test_dir: utils::TestDir,
     #[case] expected: VCSResult<()>,
     create_dirs: &anyhow::Result<()>,
 ) {
@@ -80,5 +80,5 @@ fn vcs_required(
     opts.allow_dirty = allow_dirty;
     opts.allow_staged = allow_staged;
 
-    test_utils::test_check_version_control(opts, test_dir, expected);
+    utils::test_check_version_control(opts, test_dir, expected);
 }
