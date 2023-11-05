@@ -108,16 +108,21 @@ pub(crate) fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
 }
 
 pub fn create_test_folder(test_dir: TestDir) -> anyhow::Result<()> {
+    // Skip if folder if it already exists (doesn't check that it is in the correct state)
+    let path = test_dir.to_path();
+    if path.exists() {
+        return Ok(());
+    }
+
     match test_dir {
-        TestDir::NoVCS => paths::create_dir_all(test_dir.to_path()),
+        TestDir::NoVCS => paths::create_dir_all(path),
         TestDir::Clean => {
-            let path = test_dir.to_path();
             // paths::create_dir_all(&path)?;
             git_commands::init(&path)?;
             Ok(())
         }
-        TestDir::StagedOnly => Ok(()),
-        TestDir::DirtyOnly => Ok(()),
-        TestDir::StagedAndDirty => Ok(()), // TODO: Implement rest of versions
+        TestDir::StagedOnly => todo!(),
+        TestDir::DirtyOnly => todo!(),
+        TestDir::StagedAndDirty => todo!(),
     }
 }

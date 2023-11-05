@@ -6,6 +6,15 @@ Used in cargo before possibly destructive changes are done like running `cargo f
 ## Display Messages for Errors
 Display messages for errors are meant to be human readable and as such are not considered a breaking change if they are changed for clarity.
 
+## Tests
+
+The test create a folder inside of `tests/` and sets up sub folders as expected by the tests.
+The setup process is skipped if the sub folder already exists.
+It does not check if the folder is setup properly but instead just ASSUMES that it is correct.
+If you are unsure if the sub folders are setup correctly simply remove `tests/test_folders` and it will be recreated correctly when the tests are run.
+
+NB: The folder is not deleted upon completion of the tests but is instead left behind for reuse.
+
 ## License
 
 All code in this repository is dual-licensed under either:
