@@ -11,7 +11,7 @@ pub(crate) fn test_check_version_control(
     test_dir: TestDir,
     expected: VCSResult<()>,
 ) {
-    let path = test_dir.to_path();
+    let path = test_dir.to_canonicalized_path();
     println!("Opts: {opts:#?}\nPath: {path:?}");
     let actual = check_version_control(path, &opts);
     match_results(actual, expected);
@@ -76,7 +76,11 @@ impl TestDir {
             TestDir::DirtyOnly => "dirty_only",
             TestDir::StagedAndDirty => "staged_and_dirty",
         };
-        let result = base_test_folder.join(sub_folder);
+        base_test_folder.join(sub_folder)
+    }
+
+    pub(crate) fn to_canonicalized_path(&self) -> PathBuf {
+        let result = self.to_path();
         assert!(result.exists(), "Path not found: {result:?}");
         result.canonicalize().unwrap()
     }
