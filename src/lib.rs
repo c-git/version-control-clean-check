@@ -4,8 +4,15 @@
 #![forbid(unsafe_code)]
 #![doc = include_str!("../README.md")]
 
-// TODO: Add example on main page
-// //! # Sample Code
+//! # Sample Code
+//!
+//! ```rust
+//! use version_control_clean_check::{CheckOptions, check_version_control};
+//! let mut opts = CheckOptions::new();
+//! opts.allow_no_vcs = true; // Disable actual checks for example
+//! let actual = check_version_control("path_here", &opts);
+//! assert!(actual.is_ok());
+//! ```
 
 mod check;
 mod error;
