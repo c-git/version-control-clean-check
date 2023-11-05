@@ -26,7 +26,7 @@ fn non_existent_folder() {
 #[once]
 fn create_dirs() -> anyhow::Result<()> {
     for test_dir in TD::iter() {
-        create_test_folder(test_dir)?;
+        create_test_folder(&test_dir)?;
     }
     Ok(())
 }

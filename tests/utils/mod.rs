@@ -109,7 +109,7 @@ pub(crate) fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
     }
 }
 
-pub fn create_test_folder(test_dir: TestDir) -> anyhow::Result<()> {
+pub fn create_test_folder(test_dir: &TestDir) -> anyhow::Result<()> {
     // Skip if folder if it already exists (doesn't check that it is in the correct state)
     let path = test_dir.to_path();
     if path.exists() {
