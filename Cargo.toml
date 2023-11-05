@@ -1,6 +1,6 @@
 [package]
 name = "version-control-clean-check"
-version = "0.0.0"
+version = "0.1.0"
 description = "Checks if the version cotrol is clean. Based on Cargo"
 keywords = []
 repository = "https://github.com/c-git/version-control-clean-check"
@@ -14,3 +14,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = { version = "1.0.75", features = ["backtrace"] }
+cargo-util = "0.2.6"
+git2 = "0.18.1"
+thiserror = "1.0.50"
+
+[dev-dependencies]
+rstest = "0.18.2"
+strum = { version = "0.25.0", features = ["derive", "strum_macros"] }
