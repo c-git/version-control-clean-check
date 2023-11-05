@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::bail;
-use git2::Repository;
+use git2::{Repository, Signature};
 
 pub fn init<P: AsRef<Path>>(path: P) -> anyhow::Result<Repository> {
     Ok(git2::Repository::init(path)?)
@@ -21,7 +21,7 @@ pub fn commit(repo: &Repository, msg: &str) -> anyhow::Result<()> {
     // Source: Example of how to do init https://github.com/rust-lang/git2-rs/blob/fd4d7c7c840788ccdc535889a42532c3d57d338d/examples/init.rs#L94-L95
     // Second Source: Needed to see how to find parent https://github.dev/rust-lang/git2-rs/blob/master/examples/add.rs
 
-    let sig = repo.signature()?;
+    let sig = Signature::now("test_user", "test_email")?;
     let mut index = repo.index()?;
     if index.is_empty() {
         bail!("Empty index found. Unable to commit");
