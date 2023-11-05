@@ -1,6 +1,6 @@
 use rstest::{fixture, rstest};
 use std::path::PathBuf;
-use strum::{EnumIter, IntoEnumIterator};
+use strum::IntoEnumIterator;
 use utils::{create_test_folder, TestDir as TD};
 use version_control_clean_check::{check_version_control, CheckOptions, VCSError, VCSResult};
 
