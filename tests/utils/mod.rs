@@ -127,7 +127,14 @@ pub fn create_test_folder(test_dir: &TestDir) -> anyhow::Result<()> {
             git_commands::add_all(&repo, &["a", "b", "c"])?;
             git_commands::commit_irrelevant_msg(&repo)?;
         }
-        TestDir::StagedOnly => todo!(),
+        TestDir::StagedOnly => {
+            let repo = git_commands::init(&path)?;
+            create_abc(&path)?;
+            git_commands::add_all(&repo, &["a", "b", "c"])?;
+            git_commands::commit_irrelevant_msg(&repo)?;
+            // modify_files(&["b", "c"])?;
+            git_commands::add_all(&repo, &["b", "c"])?;
+        }
         TestDir::DirtyOnly => todo!(),
         TestDir::StagedAndDirty => todo!(),
     }
