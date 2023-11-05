@@ -1,3 +1,4 @@
+use anyhow::Context;
 use rstest::{fixture, rstest};
 use std::path::PathBuf;
 use strum::IntoEnumIterator;
@@ -26,7 +27,8 @@ fn non_existent_folder() {
 #[once]
 fn create_dirs() -> anyhow::Result<()> {
     for test_dir in TD::iter() {
-        create_test_folder(&test_dir)?;
+        create_test_folder(&test_dir)
+            .with_context(|| format!("Failed to create directory {test_dir:?}"))?;
     }
     Ok(())
 }
