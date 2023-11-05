@@ -1,7 +1,9 @@
 use anyhow::bail;
 use cargo_util::paths;
 use std::fmt::Debug;
+use std::fs;
 use std::fs::File;
+use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 use strum::EnumIter;
@@ -132,7 +134,7 @@ pub fn create_test_folder(test_dir: &TestDir) -> anyhow::Result<()> {
             create_abc(&path)?;
             git_commands::add_all(&repo, &["a", "b", "c"])?;
             git_commands::commit_irrelevant_msg(&repo)?;
-            // modify_files(&["b", "c"])?;
+            modify_files(&path, &["b", "c"])?;
             git_commands::add_all(&repo, &["b", "c"])?;
         }
         TestDir::DirtyOnly => todo!(),
@@ -146,6 +148,19 @@ fn create_abc<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
     for name in ["a", "b", "c"] {
         let file_name = path.join(name);
         File::create(file_name)?;
+    }
+    Ok(())
+}
+
+fn modify_files<P: AsRef<Path>>(path: P, files: &[&str]) -> anyhow::Result<()> {
+    let path = path.as_ref();
+    for name in files {
+        let file_name = path.join(name);
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(file_name)?;
+        file.write_all(b"Some text\n")?;
     }
     Ok(())
 }
