@@ -1,0 +1,99 @@
+use anyhow::bail;
+use std::fmt::Debug;
+use std::path::PathBuf;
+use version_control_clean_check::check_version_control;
+use version_control_clean_check::CheckOptions;
+use version_control_clean_check::VCSError;
+use version_control_clean_check::VCSResult;
+
+pub(crate) fn test_check_version_control(
+    opts: CheckOptions,
+    test_dir: TestDir,
+    expected: VCSResult<()>,
+) {
+    let path = test_dir.to_path();
+    println!("Opts: {opts:#?}\nPath: {path:?}");
+    let actual = check_version_control(path, &opts);
+    match_results(actual, expected);
+}
+
+#[derive(Debug)]
+pub(crate) struct TestError(VCSError);
+
+impl From<VCSError> for TestError {
+    fn from(value: VCSError) -> Self {
+        Self(value)
+    }
+}
+
+impl<T: Debug> TryFrom<VCSResult<T>> for TestError {
+    type Error = anyhow::Error;
+
+    fn try_from(value: VCSResult<T>) -> Result<Self, Self::Error> {
+        if value.is_ok() {
+            bail!("Value is not error. Found: {value:?}");
+        }
+        Ok(Self(value.unwrap_err()))
+    }
+}
+
+impl PartialEq for TestError {
+    fn eq(&self, other: &Self) -> bool {
+        match (&self.0, &other.0) {
+            (VCSError::NoVCS, VCSError::NoVCS) => true,
+            (
+                VCSError::NotAllowedFilesFound {
+                    dirty_files: l_dirty_files,
+                    staged_files: l_staged_files,
+                },
+                VCSError::NotAllowedFilesFound {
+                    dirty_files: r_dirty_files,
+                    staged_files: r_staged_files,
+                },
+            ) => l_dirty_files == r_dirty_files && l_staged_files == r_staged_files,
+            (VCSError::GitError(..), _) | (VCSError::Anyhow(..), _) => false, // Never equal if not one of our local errors during testing
+            _ => core::mem::discriminant(&self.0) == core::mem::discriminant(&other.0),
+        }
+    }
+}
+
+pub(crate) enum TestDir {
+    NoVCS,
+    Clean,
+    StagedOnly,
+    DirtyOnly,
+    StagedAndDirty,
+}
+
+impl TestDir {
+    pub(crate) const TEST_DIR_BASE: &str = "tests/test_folders/";
+    pub(crate) fn to_path(&self) -> PathBuf {
+        let base_test_folder = PathBuf::from(Self::TEST_DIR_BASE);
+        let sub_folder = match self {
+            TestDir::NoVCS => "no_vcs",
+            TestDir::Clean => "clean",
+            TestDir::StagedOnly => "staged_only",
+            TestDir::DirtyOnly => "dirty_only",
+            TestDir::StagedAndDirty => "staged_and_dirty",
+        };
+        let result = base_test_folder.join(sub_folder);
+        assert!(result.exists(), "Path not found: {result:?}");
+        result.canonicalize().unwrap()
+    }
+}
+
+pub(crate) fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
+    match (&actual, &expected) {
+        (Ok(_), Ok(_)) => (),
+        (Ok(_), Err(_)) | (Err(_), Ok(_)) => {
+            panic!("Actual and Expected do not match./n actual:{actual:?}/n expected: {expected:?}")
+        }
+        (Err(..), Err(..)) => {
+            let actual_error = actual.unwrap_err();
+            let expected_error = expected.unwrap_err();
+            println!("---\nActual Error:\n{actual_error}\n");
+            println!("---\nExpected Error:\n{expected_error}\n---");
+            assert_eq!(TestError(actual_error), TestError(expected_error))
+        }
+    }
+}
