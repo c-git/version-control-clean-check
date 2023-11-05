@@ -1,10 +1,14 @@
 use anyhow::bail;
+use cargo_util::paths;
 use std::fmt::Debug;
 use std::path::PathBuf;
+use strum::EnumIter;
 use version_control_clean_check::check_version_control;
 use version_control_clean_check::CheckOptions;
 use version_control_clean_check::VCSError;
 use version_control_clean_check::VCSResult;
+
+mod git_commands;
 
 pub(crate) fn test_check_version_control(
     opts: CheckOptions,
@@ -57,7 +61,8 @@ impl PartialEq for TestError {
     }
 }
 
-pub(crate) enum TestDir {
+#[derive(EnumIter, Debug)]
+pub enum TestDir {
     NoVCS,
     Clean,
     StagedOnly,
@@ -99,5 +104,15 @@ pub(crate) fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
             println!("---\nExpected Error:\n{expected_error}\n---");
             assert_eq!(TestError(actual_error), TestError(expected_error))
         }
+    }
+}
+
+pub fn create_test_folder(test_dir: TestDir) -> anyhow::Result<()> {
+    match test_dir {
+        TestDir::NoVCS => paths::create_dir_all(test_dir.to_path()),
+        TestDir::Clean => Ok(()), // TODO: Implement rest of versions
+        TestDir::StagedOnly => Ok(()),
+        TestDir::DirtyOnly => Ok(()),
+        TestDir::StagedAndDirty => Ok(()),
     }
 }
