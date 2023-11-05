@@ -30,18 +30,19 @@ pub fn commit(repo: &Repository, msg: &str) -> anyhow::Result<()> {
     let tree = repo.find_tree(tree_id)?;
 
     // Get head to set as parent if applicable
-    let head = repo.head()?;
-    if let Some(parent) = head.target() {
-        let parent_commit = repo.find_commit(parent)?;
-        repo.commit(Some("HEAD"), &sig, &sig, msg, &tree, &[&parent_commit])?;
-    } else {
-        // Assumes there are no commits to use as parent
-        repo.commit(Some("HEAD"), &sig, &sig, msg, &tree, &[])?;
+    if let Ok(head) = repo.head() {
+        if let Some(parent) = head.target() {
+            let parent_commit = repo.find_commit(parent)?;
+            repo.commit(Some("HEAD"), &sig, &sig, msg, &tree, &[&parent_commit])?;
+            return Ok(()); // Completed end here
+        }
     }
 
+    // Assumes there are no commits to use as parent
+    repo.commit(Some("HEAD"), &sig, &sig, msg, &tree, &[])?;
     Ok(())
 }
 
 pub fn commit_irrelevant_msg(repo: &Repository) -> anyhow::Result<()> {
-    commit(repo, "irrelevant")
+    commit(repo, "no msg set")
 }
