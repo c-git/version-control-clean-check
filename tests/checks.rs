@@ -102,7 +102,7 @@ fn non_existent_folder() {
 
 fn test_check_version_control(opts: CheckOptions, test_dir: TestDir, expected: VCSResult<()>) {
     let path = test_dir.to_path();
-    println!("Opts: {opts:?} Path: {path:?}");
+    println!("Opts: {opts:#?}\nPath: {path:?}");
     let actual = check_version_control(path, &opts);
     match_results(actual, expected);
 }
