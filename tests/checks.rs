@@ -53,8 +53,9 @@ enum TestDir {
 }
 
 impl TestDir {
+    const TEST_DIR_BASE: &str = "tests/test_folders/";
     fn to_path(&self) -> PathBuf {
-        let base_test_folder = PathBuf::from("tests/test_folders/");
+        let base_test_folder = PathBuf::from(Self::TEST_DIR_BASE);
         let sub_folder = match self {
             TestDir::NoVCS => "no_vcs",
             TestDir::Clean => "clean",
