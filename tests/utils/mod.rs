@@ -110,9 +110,14 @@ pub(crate) fn match_results(actual: VCSResult<()>, expected: VCSResult<()>) {
 pub fn create_test_folder(test_dir: TestDir) -> anyhow::Result<()> {
     match test_dir {
         TestDir::NoVCS => paths::create_dir_all(test_dir.to_path()),
-        TestDir::Clean => Ok(()), // TODO: Implement rest of versions
+        TestDir::Clean => {
+            let path = test_dir.to_path();
+            // paths::create_dir_all(&path)?;
+            git_commands::init(&path)?;
+            Ok(())
+        }
         TestDir::StagedOnly => Ok(()),
         TestDir::DirtyOnly => Ok(()),
-        TestDir::StagedAndDirty => Ok(()),
+        TestDir::StagedAndDirty => Ok(()), // TODO: Implement rest of versions
     }
 }

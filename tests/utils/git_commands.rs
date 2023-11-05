@@ -1,7 +1,8 @@
 use std::path::Path;
 
 pub fn init<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
-    todo!()
+    git2::Repository::init(path)?;
+    Ok(())
 }
 
 pub fn add<P: AsRef<Path>>(path: P) -> anyhow::Result<()> {
