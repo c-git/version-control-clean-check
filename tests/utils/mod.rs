@@ -121,8 +121,8 @@ pub fn create_test_folder(test_dir: TestDir) -> anyhow::Result<()> {
         TestDir::Clean => {
             let repo = git_commands::init(&path)?;
             create_abc(&path)?;
-            git_commands::add_all(repo, &["a", "b", "c"])?;
-
+            git_commands::add_all(&repo, &["a", "b", "c"])?;
+            git_commands::commit_irrelevant_msg(&repo)?;
             Ok(())
         }
         TestDir::StagedOnly => todo!(),
