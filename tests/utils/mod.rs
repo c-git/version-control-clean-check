@@ -75,7 +75,7 @@ pub enum TestDir {
 }
 
 impl TestDir {
-    pub(crate) const TEST_DIR_BASE: &str = "tests/test_folders/";
+    pub(crate) const TEST_DIR_BASE: &'static str = "tests/test_folders/";
     pub(crate) fn to_path(&self) -> PathBuf {
         let base_test_folder = PathBuf::from(Self::TEST_DIR_BASE);
         let sub_folder = match self {
