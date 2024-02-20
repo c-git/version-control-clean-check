@@ -1,15 +1,15 @@
 [package]
 name = "version-control-clean-check"
 version = "0.1.0"
-description = "Checks if the version control is clean. Based on code from Cargo."
-keywords = []
-repository = "https://github.com/c-git/version-control-clean-check"
-documentation = "https://docs.rs/version-control-clean-check"
-categories = []
 authors = ["One <one.bgz1@gmail.com>"]
-readme = "README.md"
-license = "MIT OR Apache-2.0"
+categories = []
+documentation = "https://docs.rs/version-control-clean-check"
 edition = "2021"
+keywords = []
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/c-git/version-control-clean-check"
+description = "Checks if the version control is clean. Based on code from Cargo."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,4 +21,4 @@ thiserror = "1.0.50"
 
 [dev-dependencies]
 rstest = "0.18.2"
-strum = { version = "0.25.0", features = ["derive", "strum_macros"] }
+strum = { version = "0.26.1", features = ["derive", "strum_macros"] }
