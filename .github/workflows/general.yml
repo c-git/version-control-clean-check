@@ -1,10 +1,15 @@
 name: Rust
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
       - main
-      - develop  
+      - develop
+      
 env:
   CARGO_TERM_COLOR: always
 
