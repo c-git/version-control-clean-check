@@ -1,10 +1,15 @@
 name: Rust
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
       - main
-      - develop  
+      - develop
+      
 env:
   CARGO_TERM_COLOR: always
 
@@ -13,8 +18,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: wykies/checkout@v3
-      - uses: wykies/setup-rust-toolchain@v1
+      - uses: wykies/checkout@main
+      - uses: wykies/setup-rust-toolchain@main
       - name: Run tests
         run: cargo test --all-features
 
@@ -22,8 +27,8 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: wykies/checkout@v3
-      - uses: wykies/setup-rust-toolchain@v1
+      - uses: wykies/checkout@main
+      - uses: wykies/setup-rust-toolchain@main
         with:
           components: rustfmt
       - name: Enforce formatting
@@ -33,8 +38,8 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: wykies/checkout@v3
-      - uses: wykies/setup-rust-toolchain@v1
+      - uses: wykies/checkout@main
+      - uses: wykies/setup-rust-toolchain@main
         with:
           components: clippy
       - name: Linting
