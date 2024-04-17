@@ -1,6 +1,6 @@
 [package]
 name = "version-control-clean-check"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["One <one.bgz1@gmail.com>"]
 categories = []
 documentation = "https://docs.rs/version-control-clean-check"
