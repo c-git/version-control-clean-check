@@ -14,11 +14,11 @@ description = "Checks if the version control is clean. Based on code from Cargo.
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = { version = "1.0.75", features = ["backtrace"] }
-cargo-util = "0.2.6"
-git2 = "0.18.1"
-thiserror = "1.0.50"
+anyhow = { version = "1.0.94", features = ["backtrace"] }
+cargo-util = "0.2.16"
+git2 = "0.19.0"
+thiserror = "2.0.4"
 
 [dev-dependencies]
-rstest = "0.19.0"
-strum = { version = "0.26.1", features = ["derive", "strum_macros"] }
+rstest = "0.23.0"
+strum = { version = "0.26.3", features = ["derive", "strum_macros"] }
