@@ -16,9 +16,14 @@ description = "Checks if the version control is clean. Based on code from Cargo.
 [dependencies]
 anyhow = { version = "1.0.94", features = ["backtrace"] }
 cargo-util = "0.2.16"
+clap = { version = "4.5.23", features = ["cargo", "env", "derive", "wrap_help"], optional = true }
 git2 = "0.19.0"
 thiserror = "2.0.8"
 
 [dev-dependencies]
 rstest = "0.23.0"
 strum = { version = "0.26.3", features = ["derive", "strum_macros"] }
+
+[features]
+default = []
+clap = ["dep:clap"]

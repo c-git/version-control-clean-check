@@ -2,13 +2,19 @@ use crate::{VCSError, VCSResult};
 use std::path::Path;
 
 /// Stores the options available for calling [`check_version_control`] and controls which checks if any are run
+#[cfg_attr(feature = "clap", derive(clap::Args))]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 pub struct CheckOptions {
     /// Does not return an error for dirty files nor generate the list of said files
+    #[cfg_attr(feature = "clap", arg(long))]
     pub allow_dirty: bool,
+
     /// This option basically disables checking. If true no checks are done. (Not even if the `path` exists)
+    #[cfg_attr(feature = "clap", arg(long))]
     pub allow_no_vcs: bool,
+
     /// Does not return an error for staged files nor generate the list of said files
+    #[cfg_attr(feature = "clap", arg(long))]
     pub allow_staged: bool,
 }
 
